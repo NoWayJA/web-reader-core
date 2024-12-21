@@ -105,6 +105,24 @@ model Url {
   
 }
 
+model Configuration {
+  id String @id @default(cuid())
+  name String @db.Text
+  description String? @db.Text
+  prompt String? @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  fields ConfigurationFieldJoin[]
+}
+
+model ConfigurationFieldJoin {
+  id String @id @default(cuid())
+  parentId String
+  childId String
+  parent Configuration @relation(fields: [parentId], references: [id])
+  child Field @relation(fields: [childId], references: [id])
+}
+
 model Field {
   id String @id @default(cuid())
   name String @db.Text
@@ -114,4 +132,5 @@ model Field {
   weight Int @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+  configurations ConfigurationFieldJoin[]
 }
