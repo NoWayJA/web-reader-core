@@ -20,7 +20,6 @@ const menuItems: MenuItem[] = [
     { label: 'Fields', href: '/fields' },
     { label: 'Queue', href: '/queue' },
     { label: 'Entries', href: '/entries' },
-    { label: 'Indicators', href: '/indicators' },
     { label: 'Users', href: '/users' },
 ]
 

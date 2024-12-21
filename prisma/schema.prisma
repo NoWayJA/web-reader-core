@@ -86,7 +86,6 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-
 // module tables
 
 model Url {
@@ -104,4 +103,15 @@ model Url {
   children Url[] @relation("UrlToUrl")
   parent   Url?  @relation("UrlToUrl", fields: [parentId], references: [id])
   
+}
+
+model Field {
+  id String @id @default(cuid())
+  name String @db.Text
+  type String @db.Text
+  description String? @db.Text
+  prompt String? @db.Text
+  weight Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
