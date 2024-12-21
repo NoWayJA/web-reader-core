@@ -12,6 +12,7 @@
   "dependencies": {
     "@prisma/client": "^6.1.0",
     "clsx": "^2.1.1",
+    "csv": "^6.3.11",
     "dotenv": "^16.4.7",
     "fs": "^0.0.1-security",
     "next": "15.1.2",
