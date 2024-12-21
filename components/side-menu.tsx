@@ -16,6 +16,9 @@ const menuItems: MenuItem[] = [
     { label: 'ListPages', href: '/listpages' },
     { label: 'ContentPages', href: '/contentpages' },
     { label: 'Configurations', href: '/configurations' },
+    { label: 'Fields', href: '/fields' },
+    { label: 'Entries', href: '/entries' },
+    { label: 'Indicators', href: '/indicators' },
     { label: 'Users', href: '/users' },
 ]
 
@@ -25,7 +28,7 @@ export function SideMenu() {
     return (
         <nav className="flex flex-col w-64 h-screen bg-gray-50 border-r">
             <div className="p-4">
-                <h1 className="text-xl font-bold">Your App</h1>
+                <h1 className="text-xl font-bold">Web Reader Core</h1>
             </div>
 
             <div className="flex-1 px-3">

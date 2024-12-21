@@ -1,0 +1,8 @@
+{
+    "name": "Example",
+    "description": "Example module for Versity",
+    "version": "0.1.0",
+    "dependencies": {
+        "content":"*"   
+    }
+}

@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "npm run copy && next dev",
+    "copy": "node ./web-reader/build/copy_files.js",
+    "build": "npm run copy && next build",
     "start": "next start",
     "lint": "next lint"
   },

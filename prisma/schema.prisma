@@ -86,3 +86,17 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+
+// module tables
+
+model Url {
+  id String @id @default(cuid())
+  url String @db.Text
+  name String? @db.Text
+  description String? @db.Text
+  source Boolean @default(false)
+  listPage Boolean @default(false)
+  contentPage Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
