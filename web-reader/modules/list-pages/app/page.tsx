@@ -8,7 +8,9 @@ interface PageProps {
 
 // Convert to Server Component and properly type the props
 const ListPages = async ({ searchParams }: PageProps) => {
-    const {page} = await searchParams;
+    const pageParam = await searchParams.page;
+    const page = pageParam ? Number(pageParam) : undefined;
+    
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <div className="max-w-7xl mx-auto">
@@ -24,12 +26,10 @@ const ListPages = async ({ searchParams }: PageProps) => {
                         <DataTable 
                             params={{
                                 table: "url",
-                                crud: "r",
                                 cols: ["name", "url"],
-                                page: page,
-                                filter: "listPage"
+                                page,
+                                filter: JSON.stringify([{ listPage: true }])
                             }}
-                            searchParams={searchParams} 
                         />
                     </div>
                 </div>

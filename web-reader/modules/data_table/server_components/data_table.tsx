@@ -4,8 +4,19 @@ import { db } from "@/db/db";
 import Link from "next/link";
 import "../styles/styles.css";
 
-export default async function DataTable({ params }:
-  { params: any, searchParams: any }) {
+interface TableParams {
+  table: string;
+  page?: number;
+  cols: string[];
+  filter?: string;
+}
+
+interface Entity {
+  id: number;
+  [key: string]: any; // Dynamic properties based on columns
+}
+
+export default async function DataTable({ params }: { params: TableParams }) {
 
   const pageSize = 10;
   const tableName = params.table;
@@ -13,12 +24,24 @@ export default async function DataTable({ params }:
   const offset = (page - 1) * pageSize;
 
   // Build where clause dynamically
-  const where: any = {};
+  const where: Record<string, unknown> = {};
   if (params.filter) {
-    where[params.filter] = true;  // e.g., { source: true } or { listPage: true }
+    const filterArray = JSON.parse(params.filter);
+    filterArray.forEach((filterObj: Record<string, unknown>) => {
+      const [key, value] = Object.entries(filterObj)[0];
+      where[key] = value;
+    });
   }
 
-  const allEntities = await (db[tableName] as unknown as { findMany: any }).findMany({
+  const allEntities = await (db[tableName] as {
+    findMany: (params: {
+      where: Record<string, unknown>;
+      orderBy: { id: "desc" };
+      select: Record<string, boolean>;
+      take: number;
+      skip: number;
+    }) => Promise<Entity[]>
+  }).findMany({
     where,
     orderBy: { id: "desc" },
     select: cols(),
@@ -26,8 +49,8 @@ export default async function DataTable({ params }:
     skip: offset,
   });
 
-  function cols() {
-    return params.cols.reduce((acc: any, col: string) => {
+  function cols(): Record<string, boolean> {
+    return params.cols.reduce((acc: Record<string, boolean>, col: string) => {
       acc[col] = true;
       return acc;
     }, { id: true });

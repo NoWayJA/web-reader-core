@@ -11,10 +11,11 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Dashboard', href: '/' },
     { label: 'Sources', href: '/sources' },
     { label: 'List Pages', href: '/list-pages' },
     { label: 'Content Pages', href: '/content-pages' },
+    { label: 'Unclassified URLs', href: '/unclassified-urls' },
     { label: 'Configurations', href: '/configurations' },
     { label: 'Fields', href: '/fields' },
     { label: 'Queue', href: '/queue' },
