@@ -1,0 +1,1 @@
+Put most of your code here rather than in app/page.tsx that way hot reload will work 

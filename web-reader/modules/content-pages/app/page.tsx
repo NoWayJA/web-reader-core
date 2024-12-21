@@ -7,15 +7,15 @@ interface PageProps {
 }
 
 // Convert to Server Component and properly type the props
-const Sources = async ({ searchParams }: PageProps) => {
+const ContentPages = async ({ searchParams }: PageProps) => {
     const {page} = await searchParams;
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <div className="max-w-7xl mx-auto">
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Content Sources</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Content Pages</h1>
                     <p className="mt-2 text-gray-600">
-                        Manage your content sources and URLs
+                        Manage your content pages and URLs
                     </p>
                 </div>
                 
@@ -27,7 +27,7 @@ const Sources = async ({ searchParams }: PageProps) => {
                                 crud: "r",
                                 cols: ["name", "url"],
                                 page: page,
-                                filter: "source"
+                                filter: "contentPage"
                             }}
                             searchParams={searchParams} 
                         />
@@ -38,4 +38,4 @@ const Sources = async ({ searchParams }: PageProps) => {
     );
 };
 
-export default Sources;
+export default ContentPages;

@@ -1,0 +1,59 @@
+/* table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  background-color: #f9fafb;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+td {
+  color: #4b5563;
+}
+
+tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+/* Style links in table */
+td a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+td a:hover {
+  text-decoration: underline;
+}
+
+/* Zebra striping for better readability */
+tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+/* Pagination styles */
+.pagination {
+  margin-top: 1rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.pagination a {
+  color: #2563eb;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+}
+
+.pagination a:hover {
+  text-decoration: underline;
+}

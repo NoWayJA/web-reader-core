@@ -94,9 +94,14 @@ model Url {
   url String @db.Text
   name String? @db.Text
   description String? @db.Text
+  parentId String? @db.Text
   source Boolean @default(false)
   listPage Boolean @default(false)
   contentPage Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+  
+  children Url[] @relation("UrlToUrl")
+  parent   Url?  @relation("UrlToUrl", fields: [parentId], references: [id])
+  
 }

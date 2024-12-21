@@ -2,18 +2,24 @@
 
 import { db } from "@/db/db";
 import Link from "next/link";
+import "../styles/styles.css";
 
 export default async function DataTable({ params }:
   { params: any, searchParams: any }) {
 
   const pageSize = 10;
   const tableName = params.table;
-
-
   const page = params.page || 1;
-  
   const offset = (page - 1) * pageSize;
+
+  // Build where clause dynamically
+  const where: any = {};
+  if (params.filter) {
+    where[params.filter] = true;  // e.g., { source: true } or { listPage: true }
+  }
+
   const allEntities = await (db[tableName] as unknown as { findMany: any }).findMany({
+    where,
     orderBy: { id: "desc" },
     select: cols(),
     take: pageSize,
@@ -32,17 +38,11 @@ export default async function DataTable({ params }:
       <div className="w-full justify-between">
         <div className="centre">
           <h1 className="page-title">
-            {params.table} Table
+            {params.table.charAt(0).toUpperCase() + params.table.slice(1)} Table
           </h1>
         </div>
         <div className="center">
-          table:  {params.table}
-        </div>
-        <div className="center">
-          crud:  {params.crud}
-        </div>
-        <div className="center">
-          <table className="table-auto">
+          <table>
             <thead>
               <tr>
                 {params.cols.map((col: string) => (
