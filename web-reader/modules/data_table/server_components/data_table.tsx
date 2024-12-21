@@ -3,6 +3,7 @@
 import { db } from "@/db/db";
 import Link from "next/link";
 import "../styles/styles.css";
+import { PencilIcon, PlayIcon } from '@heroicons/react/24/outline';
 
 interface TableParams {
   table: string;
@@ -10,6 +11,7 @@ interface TableParams {
   cols: string[];
   filter?: string;
   children?: string[];
+  actions?: ('edit' | 'play')[];
 }
 
 export default async function DataTable({ params }: { params: TableParams }) {
@@ -69,7 +71,7 @@ export default async function DataTable({ params }: { params: TableParams }) {
                 {params.children?.map((child: string) => (
                   <th key={child}>{child}</th>
                 ))}
-                <th>Action</th>
+                <th className="px-4 py-2">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -83,10 +85,25 @@ export default async function DataTable({ params }: { params: TableParams }) {
                       {entity[child]?.name || 'None'}
                     </td>
                   ))}
-                  <td>
-                    <Link href={`/app/(home)/admin/${params.table}/edit/${entity.id}`}>
-                      Edit
-                    </Link>
+                  <td className="px-4 py-2 flex gap-2">
+                    {(!params.actions || params.actions.includes('edit')) && (
+                      <Link 
+                        href={`/app/(home)/admin/${params.table}/edit/${entity.id}`}
+                        className="text-gray-600 hover:text-gray-900"
+                        title="Edit"
+                      >
+                        <PencilIcon className="h-5 w-5" />
+                      </Link>
+                    )}
+                    {(!params.actions || params.actions.includes('play')) && (
+                      <Link 
+                        href={`/app/(home)/admin/${params.table}/play/${entity.id}`}
+                        className="text-green-600 hover:text-green-900"
+                        title="Play"
+                      >
+                        <PlayIcon className="h-5 w-5" />
+                      </Link>
+                    )}
                   </td>
                 </tr>
               ))}
