@@ -3,7 +3,8 @@
 import { db } from "@/db/db";
 import Link from "next/link";
 import "../styles/styles.css";
-import { PencilIcon, PlayIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { deleteRecord } from '../server_actions/delete';
 
 interface TableParams {
   table: string;
@@ -11,7 +12,7 @@ interface TableParams {
   cols: string[];
   filter?: string;
   children?: string[];
-  actions?: ('edit' | 'play')[];
+  actions?: ('edit' | 'play' | 'delete')[];
 }
 
 export default async function DataTable({ params }: { params: TableParams }) {
@@ -103,6 +104,19 @@ export default async function DataTable({ params }: { params: TableParams }) {
                       >
                         <PlayIcon className="h-5 w-5" />
                       </Link>
+                    )}
+                    {(!params.actions || params.actions.includes('delete')) && (
+                      <form action={deleteRecord} className="ml-8">
+                        <input type="hidden" name="table" value={params.table} />
+                        <input type="hidden" name="id" value={entity.id} />
+                        <button
+                          type="submit"
+                          className="text-red-600 hover:text-red-900"
+                          title="Delete"
+                        >
+                          <TrashIcon className="h-5 w-5" />
+                        </button>
+                      </form>
                     )}
                   </td>
                 </tr>
