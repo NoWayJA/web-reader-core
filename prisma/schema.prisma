@@ -97,11 +97,14 @@ model Url {
   source Boolean @default(false)
   listPage Boolean @default(false)
   contentPage Boolean @default(false)
+  configurationId String?
+  configuration Configuration? @relation(fields: [configurationId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   
   children Url[] @relation("UrlToUrl")
   parent   Url?  @relation("UrlToUrl", fields: [parentId], references: [id])
+  queue Queue[]
   
 }
 
@@ -113,6 +116,8 @@ model Configuration {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   fields ConfigurationFieldJoin[]
+
+  urls Url[]
 }
 
 model ConfigurationFieldJoin {
@@ -133,4 +138,23 @@ model Field {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   configurations ConfigurationFieldJoin[]
+}
+
+
+enum QueueStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model Queue {
+  id String @id @default(cuid())
+  urlId String
+  url Url @relation(fields: [urlId], references: [id])
+  status QueueStatus
+  actAfter DateTime
+  retries Int @default(10)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }

@@ -9,15 +9,10 @@ interface TableParams {
   page?: number;
   cols: string[];
   filter?: string;
-}
-
-interface Entity {
-  id: number;
-  [key: string]: any; // Dynamic properties based on columns
+  children?: string[];
 }
 
 export default async function DataTable({ params }: { params: TableParams }) {
-
   const pageSize = 10;
   const tableName = params.table;
   const page = params.page || 1;
@@ -33,28 +28,28 @@ export default async function DataTable({ params }: { params: TableParams }) {
     });
   }
 
-  const allEntities = await (db[tableName] as {
-    findMany: (params: {
-      where: Record<string, unknown>;
-      orderBy: { id: "desc" };
-      select: Record<string, boolean>;
-      take: number;
-      skip: number;
-    }) => Promise<Entity[]>
-  }).findMany({
+  const queryOptions: any = {
     where,
     orderBy: { id: "desc" },
-    select: cols(),
     take: pageSize,
     skip: offset,
-  });
+  };
 
-  function cols(): Record<string, boolean> {
-    return params.cols.reduce((acc: Record<string, boolean>, col: string) => {
+  // If we have children, use include, otherwise use select
+  if (params.children && params.children.length > 0) {
+    const include: Record<string, boolean> = {};
+    params.children.forEach(child => {
+      include[child] = true;
+    });
+    queryOptions.include = include;
+  } else {
+    queryOptions.select = params.cols.reduce((acc: Record<string, boolean>, col: string) => {
       acc[col] = true;
       return acc;
     }, { id: true });
   }
+
+  const allEntities = await (db[tableName] as any).findMany(queryOptions);
 
   return (
     <div>
@@ -71,33 +66,40 @@ export default async function DataTable({ params }: { params: TableParams }) {
                 {params.cols.map((col: string) => (
                   <th key={col}>{col}</th>
                 ))}
+                {params.children?.map((child: string) => (
+                  <th key={child}>{child}</th>
+                ))}
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {Array.isArray(allEntities) &&
-                allEntities.map((entity: any) => (
-                  <tr key={entity.id}>
-                    {params.cols.map((col: string) => (
-                      <td key={col}>{entity[col]}</td>
-                    ))}
-                    <td>
-                      <Link href={`/app/(home)/admin/${params.table}/edit/${entity.id}`}>
-                        Edit
-                      </Link>
+              {allEntities?.map((entity: any) => (
+                <tr key={entity.id}>
+                  {params.cols.map((col: string) => (
+                    <td key={col}>{entity[col]}</td>
+                  ))}
+                  {params.children?.map((child: string) => (
+                    <td key={child}>
+                      {entity[child]?.name || 'None'}
                     </td>
-                  </tr>
-                ))}
+                  ))}
+                  <td>
+                    <Link href={`/app/(home)/admin/${params.table}/edit/${entity.id}`}>
+                      Edit
+                    </Link>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
           <div className="pagination">
-            <Link href={`?page=${page >1 ?page * 1 - 1 : 1}`}>
+            <Link href={`?page=${page > 1 ? page - 1 : 1}`}>
               Previous
             </Link>
             &nbsp;
             {page}
             &nbsp;
-            <Link href={`?page=${page * 1 + 1}`}>
+            <Link href={`?page=${page + 1}`}>
               Next
             </Link>
           </div>
