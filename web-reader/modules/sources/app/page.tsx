@@ -8,8 +8,8 @@ interface PageProps {
 
 // Convert to Server Component and properly type the props
 const Sources = async ({ searchParams }: PageProps) => {
-    const pageParam = await searchParams.page;
-    const page = pageParam ? Number(pageParam) : undefined;
+    const {page} = await searchParams;
+    const pageNumber = page ? Number(page) : undefined;
     
     return (
         <div className="min-h-screen bg-gray-50 p-6">
@@ -27,7 +27,7 @@ const Sources = async ({ searchParams }: PageProps) => {
                             params={{
                                 table: "url",
                                 cols: ["name", "url"],
-                                page,
+                                page: pageNumber,
                                 filter: JSON.stringify([{ source: true }])
                             }}
                         />
