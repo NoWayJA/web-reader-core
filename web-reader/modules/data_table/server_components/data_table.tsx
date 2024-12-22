@@ -3,8 +3,9 @@
 import { db } from "@/db/db";
 import Link from "next/link";
 import "../styles/styles.css";
-import { PencilIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { deleteRecord } from '../server_actions/delete';
+import PlayAction from '../client_components/play_action';
 
 interface TableParams {
   table: string;
@@ -12,7 +13,11 @@ interface TableParams {
   cols: string[];
   filter?: string;
   children?: string[];
-  actions?: ('edit' | 'play' | 'delete')[];
+  actions?: (
+    | 'edit' 
+    | 'delete' 
+  )[];
+  playAction?: { name: string; action: (id: string) => Promise<any> };
 }
 
 export default async function DataTable({ params }: { params: TableParams }) {
@@ -79,7 +84,18 @@ export default async function DataTable({ params }: { params: TableParams }) {
               {allEntities?.map((entity: any) => (
                 <tr key={entity.id}>
                   {params.cols.map((col: string) => (
-                    <td key={col}>{entity[col]}</td>
+                    <td key={col}>
+                      {entity[col] instanceof Date 
+                        ? new Date(entity[col]).toLocaleString("en-GB", { 
+                          year: 'numeric', 
+                          month: 'long', 
+                          day: 'numeric', 
+                          hour: 'numeric', 
+                          minute: 'numeric', 
+                          second: 'numeric' 
+                        })
+                        : entity[col]}
+                    </td>
                   ))}
                   {params.children?.map((child: string) => (
                     <td key={child}>
@@ -96,14 +112,11 @@ export default async function DataTable({ params }: { params: TableParams }) {
                         <PencilIcon className="h-5 w-5" />
                       </Link>
                     )}
-                    {(!params.actions || params.actions.includes('play')) && (
-                      <Link 
-                        href={`/app/(home)/admin/${params.table}/play/${entity.id}`}
-                        className="text-green-600 hover:text-green-900"
-                        title="Play"
-                      >
-                        <PlayIcon className="h-5 w-5" />
-                      </Link>
+                    {params.playAction && (
+                      <PlayAction 
+                        id={entity.id}
+                        action={params.playAction.action}
+                      />
                     )}
                     {(!params.actions || params.actions.includes('delete')) && (
                       <form action={deleteRecord} className="ml-8">

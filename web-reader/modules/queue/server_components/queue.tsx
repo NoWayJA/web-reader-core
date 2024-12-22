@@ -26,7 +26,8 @@ const Queue = async ({ searchParams }: PageProps) => {
                         <DataTable  
                             params={{
                                 table: "queue",
-                                cols: ["url", "status", "actAfter", "retries"],
+                                cols: ["status",  "retries", "actAfter"],
+                                children: ["url"],
                                 page: pageNumber
                             }}
                         />

@@ -150,7 +150,7 @@ enum QueueStatus {
 
 model Queue {
   id String @id @default(cuid())
-  urlId String
+  urlId String @unique
   url Url @relation(fields: [urlId], references: [id])
   status QueueStatus
   actAfter DateTime

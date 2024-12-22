@@ -1,7 +1,7 @@
 import React from 'react';
 import DataTable from '@/web-reader/modules/data_table/server_components/data_table';
 import CSVUpload from '../../data_table/client_components/csv_upload';
-
+import { queueSource } from '../server-actions/source-action';
 // Define proper types for the page props
 interface PageProps {
     searchParams: { [key: string]: string | string[] | undefined }
@@ -30,7 +30,11 @@ const ContentPages = async ({ searchParams }: PageProps) => {
                                 cols: ["name", "url"],
                                 children: ["configuration"],
                                 page: pageNumber,
-                                filter: JSON.stringify([{ contentPage: true }])
+                                filter: JSON.stringify([{ contentPage: true }]),
+                                playAction: {
+                                    name: "queue",
+                                    action: queueSource
+                                }
                             }}
                         />
                     </div>
