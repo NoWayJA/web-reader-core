@@ -40,3 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 app/(home)/(modules)
+app/(home)/admin/(modules)
+app/(home)/api/(modules)
