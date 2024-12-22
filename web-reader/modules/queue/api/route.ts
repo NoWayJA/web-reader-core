@@ -23,9 +23,12 @@ export async function GET() {
         where: { status: 'PENDING' },
         orderBy: { actAfter: 'asc' }  // Get earliest scheduled item first
     });
-    // Return 204 if no pending items found
+    // Return queue empty if no pending items found
     if (!queue) {
-        return new Response('No pending items found', { status: 204 });
+        return new Response(JSON.stringify({ queue: "empty" }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
     return new Response(JSON.stringify(queue), {
         status: 200,
