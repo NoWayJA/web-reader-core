@@ -1,8 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
 
 interface MenuItem {
     label: string
@@ -24,29 +22,33 @@ const menuItems: MenuItem[] = [
 ]
 
 export function SideMenu() {
-    const pathname = usePathname()
 
     return (
-        <nav className="flex flex-col w-64 h-screen bg-gray-50 border-r">
-            <div className="p-4">
-                <h1 className="text-xl font-bold">Web Reader Core</h1>
+        <aside className="w-64 min-h-screen bg-gradient-to-b from-blue-600 via-blue-700 to-indigo-800 text-white">
+            <div className="p-6">
+                <h1 className="text-xl font-bold mb-8 text-white/90">Web Reader</h1>
+                
+                <nav className="space-y-1">
+                    {menuItems.map((item) => (
+                        <MenuItem
+                            key={item.href}
+                            href={item.href}
+                            label={item.label}
+                        />
+                    ))}
+                </nav>
             </div>
+        </aside>
+    )
+}
 
-            <div className="flex-1 px-3">
-                {menuItems.map((item) => (
-                    <Link
-                        key={item.href}
-                        href={item.href}
-                        className={cn(
-                            'flex items-center px-4 py-2 mt-2 text-gray-600 rounded-lg hover:bg-gray-100',
-                            pathname === item.href && 'bg-gray-100 text-gray-900 font-medium'
-                        )}
-                    >
-                        {item.icon && <span className="mr-3">{item.icon}</span>}
-                        {item.label}
-                    </Link>
-                ))}
-            </div>
-        </nav>
+function MenuItem({ href, label }: { href: string; label: string }) {
+    return (
+        <Link 
+            href={href}
+            className="block px-4 py-2 rounded-md text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors duration-200"
+        >
+            {label}
+        </Link>
     )
 } 
