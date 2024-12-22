@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
-//import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SideMenu } from '@/components/side-menu'
+import { SideMenu } from '@/components/side-menu';
+import { Inter } from 'next/font/google';
 
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
   title: "Web Reader Core",
@@ -24,15 +19,17 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>
-        <div className="flex">
+    <html lang="en" className={inter.variable}>
+      <body className="bg-gray-50 dark:bg-gray-900">
+        <div className="flex min-h-screen">
           <SideMenu />
-          <main className="flex-1">
-            {children}
+          <main className="flex-1 overflow-auto">
+            <div className="container mx-auto px-4 py-8">
+              {children}
+            </div>
           </main>
         </div>
       </body>
     </html>
-  )
+  );
 }
