@@ -3,21 +3,14 @@
 
 import { NextResponse } from "next/server";
 
+var last_log_time: string | undefined;
 declare global {
   var logs: string[] | undefined;
+  var logs_updated: string | undefined;
 }
 
 if (!globalThis.logs) {
   globalThis.logs = [];
-}
-
-function addLog(message: string) {
-  if (globalThis.logs) {
-    globalThis.logs.push(message);
-    if (globalThis.logs.length > 50) {
-      globalThis.logs.shift();
-    }
-  }
 }
 
 export async function GET() {
@@ -28,18 +21,21 @@ export async function GET() {
   const stream = new ReadableStream({
     start(controller) {
       // Send initial logs
-      controller.enqueue(encoder.encode(`data: ${JSON.stringify(globalThis.logs)}\n\n`));
 
       intervalId = setInterval(() => {
         if (!isStreamClosed) {
-          try {
-            addLog(`Server time: ${new Date().toISOString()}`);
+          if (globalThis.logs_updated && globalThis.logs_updated != last_log_time) {
             controller.enqueue(encoder.encode(`data: ${JSON.stringify(globalThis.logs)}\n\n`));
-          } catch (error) {
-            console.error("Error sending logs:", error);
-            clearInterval(intervalId);
-            controller.close();
-            isStreamClosed = true;
+            last_log_time = globalThis.logs_updated;
+            try {
+              // addLog(`Server time: ${new Date().toISOString()}`);
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify(globalThis.logs)}\n\n`));
+            } catch (error) {
+              console.error("Error sending logs:", error);
+              clearInterval(intervalId);
+              controller.close();
+              isStreamClosed = true;
+            }
           }
         }
       }, 1000);
