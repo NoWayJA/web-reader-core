@@ -22,11 +22,10 @@ const menuItems: MenuItem[] = [
 ]
 
 export function SideMenu() {
-
     return (
-        <aside className="w-64 min-h-screen bg-gradient-to-b from-blue-600 via-blue-700 to-indigo-800 text-white">
-            <div className="p-6">
-                <h1 className="text-xl font-bold mb-8 text-white/90">Web Reader</h1>
+        <aside className="w-48 min-h-screen bg-gradient-to-b from-blue-600 via-blue-700 to-indigo-800 text-white">
+            <div className="p-4">
+                <h1 className="text-lg font-bold mb-6 text-white/90">Web Reader</h1>
                 
                 <nav className="space-y-1">
                     {menuItems.map((item) => (
@@ -46,7 +45,7 @@ function MenuItem({ href, label }: { href: string; label: string }) {
     return (
         <Link 
             href={href}
-            className="block px-4 py-2 rounded-md text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors duration-200"
+            className="block px-3 py-2 rounded-md text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors duration-200"
         >
             {label}
         </Link>
