@@ -24,6 +24,20 @@ interface TableParams {
   playAction?: { name: string; action: (id: string) => Promise<any> };
 }
 
+function formatValue(value: any): string {
+  if (value instanceof Date) {
+    return value.toLocaleString("en-GB", { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric', 
+      hour: 'numeric', 
+      minute: 'numeric', 
+      second: 'numeric' 
+    });
+  }
+  return String(value ?? '');
+}
+
 export default async function DataTable({ params }: { params: TableParams }) {
   const pageSize = 10;
   const tableName = params.table;
@@ -97,7 +111,7 @@ export default async function DataTable({ params }: { params: TableParams }) {
                 <tr key={entity.id}>
                   {params.cols.map((col: string) => (
                     <td key={col} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {entity[col]}
+                      {formatValue(entity[col])}
                     </td>
                   ))}
                   {params.children?.map((child: string) => (
