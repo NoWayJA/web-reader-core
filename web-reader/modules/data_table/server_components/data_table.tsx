@@ -3,9 +3,11 @@
 import { db } from "@/db/db";
 import Link from "next/link";
 import "../styles/styles.css";
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { TrashIcon } from '@heroicons/react/24/outline';
 import { deleteRecord } from '../server_actions/delete';
 import PlayAction from '../client_components/play_action';
+import { updateRecord } from '../server_actions/update';
+import EditButton from '../client_components/edit_button';
 
 interface TableParams {
   table: string;
@@ -68,7 +70,7 @@ export default async function DataTable({ params }: { params: TableParams }) {
           </h1>
         </div>
         <div className="center">
-          <table>
+          <table className="min-w-full divide-y divide-gray-200">
             <thead>
               <tr>
                 {params.cols.map((col: string) => (
@@ -80,38 +82,26 @@ export default async function DataTable({ params }: { params: TableParams }) {
                 <th className="px-4 py-2">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="bg-white divide-y divide-gray-200">
               {allEntities?.map((entity: any) => (
                 <tr key={entity.id}>
                   {params.cols.map((col: string) => (
-                    <td key={col}>
-                      {entity[col] instanceof Date 
-                        ? new Date(entity[col]).toLocaleString("en-GB", { 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric', 
-                          hour: 'numeric', 
-                          minute: 'numeric', 
-                          second: 'numeric' 
-                        })
-                        : entity[col]}
+                    <td key={col} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {entity[col]}
                     </td>
                   ))}
                   {params.children?.map((child: string) => (
-                    <td key={child}>
+                    <td key={child} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {entity[child]?.name || 'None'}
                     </td>
                   ))}
-                  <td className="px-4 py-2 flex gap-2">
-                    {(!params.actions || params.actions.includes('edit')) && (
-                      <Link 
-                        href={`/app/(home)/admin/${params.table}/edit/${entity.id}`}
-                        className="text-gray-600 hover:text-gray-900"
-                        title="Edit"
-                      >
-                        <PencilIcon className="h-5 w-5" />
-                      </Link>
-                    )}
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <EditButton 
+                      record={entity}
+                      table={params.table}
+                      columns={params.cols}
+                      onUpdate={updateRecord}
+                    />
                     {params.playAction && (
                       <PlayAction 
                         id={entity.id}
@@ -119,7 +109,7 @@ export default async function DataTable({ params }: { params: TableParams }) {
                       />
                     )}
                     {(!params.actions || params.actions.includes('delete')) && (
-                      <form action={deleteRecord} className="ml-8">
+                      <form action={deleteRecord} className="ml-8 inline-block">
                         <input type="hidden" name="table" value={params.table} />
                         <input type="hidden" name="id" value={entity.id} />
                         <button
