@@ -131,7 +131,7 @@ model ConfigurationFieldJoin {
 model Field {
   id String @id @default(cuid())
   name String @db.Text
-  type String @db.Text
+  type String @db.Text @default("text")
   description String? @db.Text
   prompt String? @db.Text
   weight Int @default(1)
