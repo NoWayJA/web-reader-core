@@ -8,6 +8,8 @@ import { deleteRecord } from '../server_actions/delete';
 import PlayAction from '../client_components/play_action';
 import { updateRecord } from '../server_actions/update';
 import EditButton from '../client_components/edit_button';
+import AddButton from '../client_components/add_button';
+import { addRecord } from '../server_actions/add';
 
 interface TableParams {
   table: string;
@@ -68,6 +70,14 @@ export default async function DataTable({ params }: { params: TableParams }) {
           <h1 className="page-title">
             {params.table.charAt(0).toUpperCase() + params.table.slice(1)} Table
           </h1>
+        </div>
+        <div>
+          <AddButton 
+            table={params.table}
+            columns={params.cols}
+            filter={params.filter}
+            onAdd={addRecord}
+          />
         </div>
         <div className="center">
           <table className="min-w-full divide-y divide-gray-200">
