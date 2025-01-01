@@ -41,10 +41,10 @@ export default function ManyToManyAddModal({
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="mx-auto max-w-md rounded bg-white p-6">
-          <Dialog.Title className="text-lg font-medium mb-4">
+        <div className="w-full max-w-3xl rounded bg-white p-6">
+          <h2 className="text-lg font-medium mb-4">
             Add New Record
-          </Dialog.Title>
+          </h2>
           
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
@@ -117,7 +117,7 @@ export default function ManyToManyAddModal({
               </button>
             </div>
           </form>
-        </Dialog.Panel>
+        </div>
       </div>
     </Dialog>
   );

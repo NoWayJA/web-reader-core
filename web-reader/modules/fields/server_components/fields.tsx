@@ -26,8 +26,8 @@ const Fields = async ({ searchParams }: PageProps) => {
                         <DataTable 
                             params={{
                                 table: "field",
-                                cols: ["name", "type", "description", "prompt"],
-                                inputTypes: ["text", "text", "textarea", "textarea"],
+                                cols: ["name", "type", "description","weight", "prompt"],
+                                inputTypes: ["text", "text", "textarea", "text", "textarea"],
                                 page: pageNumber
                             }}
                         />

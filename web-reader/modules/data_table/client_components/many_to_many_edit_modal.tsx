@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Dialog } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
-interface ManyToManyModalProps {
+interface ManyToManyEditModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (selectedIds: string[]) => Promise<void>;
@@ -13,14 +13,14 @@ interface ManyToManyModalProps {
   currentChildren: any[];
 }
 
-export default function ManyToManyModal({ 
+export default function ManyToManyEditModal({ 
   isOpen, 
   onClose, 
   onSave, 
   record, 
   availableChildren,
   currentChildren 
-}: ManyToManyModalProps) {
+}: ManyToManyEditModalProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {
@@ -47,10 +47,10 @@ export default function ManyToManyModal({
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="mx-auto max-w-md rounded bg-white p-6">
-          <Dialog.Title className="text-lg font-medium mb-4">
+        <div className="w-full max-w-3xl rounded bg-white p-6">
+          <h2 className="text-lg font-medium mb-4">
             Edit Relationships for {record.name}
-          </Dialog.Title>
+          </h2>
           
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
@@ -110,7 +110,7 @@ export default function ManyToManyModal({
               </button>
             </div>
           </form>
-        </Dialog.Panel>
+        </div>
       </div>
     </Dialog>
   );

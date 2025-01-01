@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { PencilIcon } from '@heroicons/react/24/outline';
-import ManyToManyModal from './many_to_many_modal';
+import ManyToManyModal from './many_to_many_edit_modal';
 import { updateManyToManyRelationships } from '../server_actions/many_to_many';
 
 interface ManyToManyEditButtonProps {
