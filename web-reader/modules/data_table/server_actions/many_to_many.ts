@@ -31,4 +31,36 @@ export async function updateManyToManyRelationships(
     console.error('Error updating relationships:', error);
     return { success: false, error: 'Failed to update relationships' };
   }
+}
+
+export async function addManyToManyRecord(
+  name: string,
+  childIds: string[],
+  parentTable: string,
+  joinTable: string
+) {
+  try {
+    // Create parent record
+    const parent = await (db[parentTable] as any).create({
+      data: {
+        name
+      }
+    });
+
+    // Create relationships
+    const promises = childIds.map((childId: string) =>
+      (db[joinTable] as any).create({
+        data: {
+          parentId: parent.id,
+          childId
+        }
+      })
+    );
+
+    await Promise.all(promises);
+    return { success: true };
+  } catch (error) {
+    console.error('Error adding record:', error);
+    return { success: false, error: 'Failed to add record' };
+  }
 } 

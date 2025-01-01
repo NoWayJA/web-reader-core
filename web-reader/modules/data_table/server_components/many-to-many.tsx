@@ -2,6 +2,7 @@
 
 import { db } from "@/db/db";
 import ManyToManyEditButton from '../client_components/many_to_many_edit_button';
+import ManyToManyAddButton from '../client_components/many_to_many_add_button';
 
 interface ManyToManyProps {
   params: {
@@ -30,6 +31,14 @@ export default async function ManyToMany({ params }: ManyToManyProps) {
 
   return (
     <div className="p-4">
+      <div className="mb-4">
+        <ManyToManyAddButton
+          availableChildren={availableChildren}
+          parentTable={parentTable}
+          childTable={childTable}
+          joinTable={joinTable}
+        />
+      </div>
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
