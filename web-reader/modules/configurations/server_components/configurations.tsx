@@ -27,7 +27,8 @@ const Configurations = async ({ searchParams }: PageProps) => {
                         <ManyToMany params={{
                             parentTable: "configuration",
                             childTable: "field",
-                            joinTable: "configurationFieldJoin"
+                            joinTable: "configurationFieldJoin",
+                            orderBy: "weight",
                         }} />
                     </div>
                 </div>

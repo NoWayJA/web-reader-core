@@ -9,11 +9,12 @@ interface ManyToManyProps {
     parentTable: string;
     childTable: string;
     joinTable: string;
+    orderBy?: string;
   };
 }
 
 export default async function ManyToMany({ params }: ManyToManyProps) {
-  const { parentTable, childTable, joinTable } = params;
+  const { parentTable, childTable, joinTable, orderBy = 'name' } = params;
 
   // Get all records with their relationships
   const records = await (db[parentTable] as any).findMany({
@@ -21,13 +22,25 @@ export default async function ManyToMany({ params }: ManyToManyProps) {
       fields: {
         include: {
           child: true
+        },
+        orderBy: {
+          child: {
+            [orderBy]: 'asc'
+          }
         }
       }
+    },
+    orderBy: {
+      name: 'asc'
     }
   });
 
-  // Get all available children for selection
-  const availableChildren = await (db[childTable] as any).findMany();
+  // Get all available children for selection with sorting
+  const availableChildren = await (db[childTable] as any).findMany({
+    orderBy: {
+      [orderBy]: 'asc'
+    }
+  });
 
   return (
     <div className="p-4">
