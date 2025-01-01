@@ -10,15 +10,24 @@ interface ManyToManyProps {
     childTable: string;
     joinTable: string;
     orderBy?: string;
+    cols?: string[];
   };
 }
 
 export default async function ManyToMany({ params }: ManyToManyProps) {
-  const { parentTable, childTable, joinTable, orderBy = 'name' } = params;
+  const {
+    parentTable,
+    childTable,
+    joinTable,
+    orderBy = 'name',
+    cols = ['name']
+  } = params;
 
   // Get all records with their relationships
   const records = await (db[parentTable] as any).findMany({
-    include: {
+    select: {
+      id: true,
+      ...cols.reduce((acc: any, col) => ({ ...acc, [col]: true }), {}),
       fields: {
         include: {
           child: true
@@ -55,12 +64,11 @@ export default async function ManyToMany({ params }: ManyToManyProps) {
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Parent Name
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Children
-            </th>
+            {cols.map(col => (
+              <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {col.charAt(0).toUpperCase() + col.slice(1)}
+              </th>
+            ))}
             <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               Actions
             </th>
@@ -69,16 +77,22 @@ export default async function ManyToMany({ params }: ManyToManyProps) {
         <tbody className="bg-white divide-y divide-gray-200">
           {records.map((record: any) => (
             <tr key={record.id}>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {record.name}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {record.fields.map((join: any) => (
-                  <span key={join.child.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-2">
-                    {join.child.name}
-                  </span>
-                ))}
-              </td>
+              {cols.map(col => (
+                <td key={col} className="px-6 py-4 text-sm text-gray-900 break-words max-w-xs">
+                  {typeof record[col] === 'object' && record[col] !== null ? (
+                    Array.isArray(record[col]) ?
+                      <div className="flex flex-wrap gap-1">
+                        {record[col].map((item: any) => (
+                          <span key={item.child.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {item.child.name}
+                          </span>
+                        ))}
+                      </div>
+                      :
+                      <div className="whitespace-pre-wrap">{JSON.stringify(record[col], null, 2)}</div>
+                  ) : record[col]}
+                </td>
+              ))}
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <ManyToManyEditButton
                   record={record}

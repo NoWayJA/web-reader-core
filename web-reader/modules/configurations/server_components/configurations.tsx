@@ -25,8 +25,11 @@ const Configurations = async ({ searchParams }: PageProps) => {
                 <div className="bg-white rounded-lg shadow">
                     <div className="p-6">
                         <ManyToMany params={{
+                            cols: ["name", "description","fields", "prompt", "sitePrompt", "listPrompt", "contentPrompt"],
+                            inputTypes: ["text", "text", "many-to-many", "textarea", "textarea", "textarea", "textarea"],
                             parentTable: "configuration",
                             childTable: "field",
+                            childJoin: "fields",
                             joinTable: "configurationFieldJoin",
                             orderBy: "weight",
                         }} />
