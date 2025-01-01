@@ -27,6 +27,7 @@ const Fields = async ({ searchParams }: PageProps) => {
                             params={{
                                 table: "field",
                                 cols: ["name", "type", "description", "prompt"],
+                                inputTypes: ["text", "text", "textarea", "textarea"],
                                 page: pageNumber
                             }}
                         />

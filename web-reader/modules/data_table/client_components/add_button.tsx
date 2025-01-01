@@ -7,11 +7,12 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 interface AddButtonProps {
   table: string;
   columns: string[];
+  inputTypes: string[];
   filter?: string;
   onAdd: (table: string, data: any) => Promise<any>;
 }
 
-export default function AddButton({ table, columns, filter, onAdd }: AddButtonProps) {
+export default function AddButton({ table, columns, inputTypes, filter, onAdd }: AddButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const defaultValues = filter ? JSON.parse(filter).reduce((acc: any, item: any) => {
@@ -41,6 +42,7 @@ export default function AddButton({ table, columns, filter, onAdd }: AddButtonPr
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}
         columns={columns}
+        inputTypes={inputTypes}
         defaultValues={defaultValues}
       />
     </>

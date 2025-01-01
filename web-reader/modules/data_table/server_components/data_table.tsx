@@ -15,6 +15,7 @@ interface TableParams {
   table: string;
   page?: number;
   cols: string[];
+  inputTypes?: string[];
   filter?: string;
   children?: string[];
   actions?: (
@@ -89,6 +90,7 @@ export default async function DataTable({ params }: { params: TableParams }) {
           <AddButton 
             table={params.table}
             columns={params.cols}
+            inputTypes={params.inputTypes || params.cols.map(() => 'text')}
             filter={params.filter}
             onAdd={addRecord}
           />
@@ -124,6 +126,7 @@ export default async function DataTable({ params }: { params: TableParams }) {
                       record={entity}
                       table={params.table}
                       columns={params.cols}
+                      inputTypes={params.inputTypes || params.cols.map(() => 'text')}
                       onUpdate={updateRecord}
                     />
                     {params.playAction && (

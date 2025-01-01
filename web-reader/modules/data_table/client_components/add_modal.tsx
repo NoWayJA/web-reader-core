@@ -8,10 +8,11 @@ interface AddModalProps {
   onClose: () => void;
   onSave: (data: any) => Promise<void>;
   columns: string[];
+  inputTypes: string[];
   defaultValues: any;
 }
 
-export default function AddModal({ isOpen, onClose, onSave, columns, defaultValues }: AddModalProps) {
+export default function AddModal({ isOpen, onClose, onSave, columns, inputTypes, defaultValues }: AddModalProps) {
   const [formData, setFormData] = useState(defaultValues);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,21 +33,30 @@ export default function AddModal({ isOpen, onClose, onSave, columns, defaultValu
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-6">
-          <Dialog.Title className="text-lg font-medium mb-4">Add New Record</Dialog.Title>
+        <div className="w-full max-w-3xl rounded bg-white p-6">
+          <h2 className="text-lg font-medium mb-4">Add New Record</h2>
           
           <form onSubmit={handleSubmit}>
-            {columns.map((column) => (
+            {columns.map((column, index) => (
               <div key={column} className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {column.charAt(0).toUpperCase() + column.slice(1)}
                 </label>
-                <input
-                  type="text"
-                  value={formData[column] || ''}
-                  onChange={(e) => handleInputChange(column, e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                />
+                {inputTypes[index] === 'textarea' ? (
+                  <textarea
+                    value={formData[column] || ''}
+                    onChange={(e) => handleInputChange(column, e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    rows={4}
+                  />
+                ) : (
+                  <input
+                    type={inputTypes[index] || 'text'}
+                    value={formData[column] || ''}
+                    onChange={(e) => handleInputChange(column, e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                )}
               </div>
             ))}
             
@@ -66,7 +76,7 @@ export default function AddModal({ isOpen, onClose, onSave, columns, defaultValu
               </button>
             </div>
           </form>
-        </Dialog.Panel>
+        </div>
       </div>
     </Dialog>
   );

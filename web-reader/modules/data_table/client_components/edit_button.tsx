@@ -8,10 +8,11 @@ interface EditButtonProps {
   record: any;
   table: string;
   columns: string[];
+  inputTypes: string[];
   onUpdate: (table: string, id: string, data: any) => Promise<any>;
 }
 
-export default function EditButton({ record, table, columns, onUpdate }: EditButtonProps) {
+export default function EditButton({ record, table, columns, inputTypes, onUpdate }: EditButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSave = async (data: any) => {
@@ -39,6 +40,7 @@ export default function EditButton({ record, table, columns, onUpdate }: EditBut
         onSave={handleSave}
         record={record}
         columns={columns}
+        inputTypes={inputTypes}
       />
     </>
   );
