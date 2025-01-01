@@ -17,7 +17,7 @@ interface TableParams {
   cols: string[];
   inputTypes?: string[];
   filter?: string;
-  children?: string[];
+  child?: string[];
   actions?: (
     | 'edit' 
     | 'delete' 
@@ -55,6 +55,16 @@ export default async function DataTable({ params }: { params: TableParams }) {
     });
   }
 
+  const childValues: Record<string, any[]> = {};
+  if (params.child?.length) {
+    await Promise.all(params.child.map(async (child) => {
+      childValues[child] = await (db[child] as any).findMany({
+        select: { id: true, name: true },
+        orderBy: { name: "asc" }
+      });
+    }));
+  }
+  console.log("childValues", childValues);
   const queryOptions: any = {
     where,
     orderBy: { id: "desc" },
@@ -63,9 +73,9 @@ export default async function DataTable({ params }: { params: TableParams }) {
   };
 
   // If we have children, use include, otherwise use select
-  if (params.children && params.children.length > 0) {
+  if (params.child && params.child.length > 0) {
     const include: Record<string, boolean> = {};
-    params.children.forEach(child => {
+    params.child.forEach(child => {
       include[child] = true;
     });
     queryOptions.include = include;
@@ -102,7 +112,7 @@ export default async function DataTable({ params }: { params: TableParams }) {
                 {params.cols.map((col: string) => (
                   <th key={col}>{col}</th>
                 ))}
-                {params.children?.map((child: string) => (
+                {params.child?.map((child: string) => (
                   <th key={child}>{child}</th>
                 ))}
                 <th className="px-4 py-2">Actions</th>
@@ -116,7 +126,7 @@ export default async function DataTable({ params }: { params: TableParams }) {
                       {formatValue(entity[col])}
                     </td>
                   ))}
-                  {params.children?.map((child: string) => (
+                  {params.child?.map((child: string) => (
                     <td key={child} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {entity[child]?.name || 'None'}
                     </td>
@@ -126,6 +136,8 @@ export default async function DataTable({ params }: { params: TableParams }) {
                       record={entity}
                       table={params.table}
                       columns={params.cols}
+                      child={params.child}
+                      childValues={childValues}
                       inputTypes={params.inputTypes || params.cols.map(() => 'text')}
                       onUpdate={updateRecord}
                     />

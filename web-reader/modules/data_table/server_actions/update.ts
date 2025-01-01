@@ -1,50 +1,51 @@
 'use server'
 
 import { db } from "@/db/db";
-import { Prisma } from '@prisma/client';
 
-async function getTableFields(table: string) {
-  // Get the Prisma model definition
-  const modelDef = (Prisma.dmmf.datamodel.models as any[])
-    .find(model => model.name.toLowerCase() === table.toLowerCase());
-
-  if (!modelDef) return {};
-
-  // Create a map of field names to their types
-  return modelDef.fields.reduce((acc: Record<string, string>, field: any) => {
-    acc[field.name] = field.type;
-    return acc;
-  }, {});
-}
+// Define relation fields
+const RELATION_FIELDS = ['parent', 'configuration'];
 
 export async function updateRecord(table: string, id: string, data: any) {
   try {
-    const fields = await getTableFields(table);
-    console.log("fields", fields);
-    
-    // Convert fields based on their type
-    const convertedData = Object.entries(data).reduce((acc: any, [key, value]: [string, any]) => {
-      if (fields[key] === 'Int') {
-        // Handle integer conversion more safely
-        if (value === '' || value === null || value === undefined) {
-          acc[key] = null;
+    const updateData: Record<string, any> = {};
+    const relationships: Record<string, any> = {};
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (typeof value === 'object' && value !== null) {
+        // Skip existing relationship objects
+        return;
+      }
+
+      const relationName = key.replace('Id', '');
+      if (key.endsWith('Id') && RELATION_FIELDS.includes(relationName)) {
+        if (value === '' || value === null || value === 'null') {
+          relationships[relationName] = { disconnect: true };
         } else {
-          const parsed = parseInt(value, 10);
-          acc[key] = isNaN(parsed) ? null : parsed;
+          relationships[relationName] = { connect: { id: value } };
         }
       } else {
-        acc[key] = value;
+        // Handle non-relation fields
+        updateData[key] = value === '' ? null : value;
       }
-      return acc;
-    }, {});
+    });
+
+    // Remove id from updateData to prevent Prisma errors
+    delete updateData.id;
+
+    console.log("Updating with data:", { ...updateData, ...relationships });
 
     const result = await (db[table] as any).update({
       where: { id },
-      data: convertedData,
+      data: {
+        ...updateData,
+        ...relationships
+      },
     });
+    
     return { success: true, data: result };
   } catch (error) {
-    console.error('Error updating record:', error);
-    return { success: false, error: String(error) };  // Convert error to string
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    console.error('Error updating record:', errorMessage);
+    return { success: false, error: errorMessage };
   }
 } 

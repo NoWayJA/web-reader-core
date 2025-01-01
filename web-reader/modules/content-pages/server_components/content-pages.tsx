@@ -28,7 +28,7 @@ const ContentPages = async ({ searchParams }: PageProps) => {
                             params={{
                                 table: "url",
                                 cols: ["name", "url"],
-                                children: ["configuration"],
+                                child: ["configuration"],
                                 page: pageNumber,
                                 filter: JSON.stringify([{ contentPage: true }]),
                                 playAction: {

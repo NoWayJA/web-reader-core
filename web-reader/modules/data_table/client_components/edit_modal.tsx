@@ -9,12 +9,23 @@ interface EditModalProps {
   onSave: (data: any) => Promise<void>;
   record: any;
   columns: string[];
+  child: string[];
+  childValues: Record<string, any[]>;
   inputTypes: string[];
 }
 
-export default function EditModal({ isOpen, onClose, onSave, record, columns, inputTypes }: EditModalProps) {
+export default function EditModal({ isOpen, onClose, onSave, record, columns, child, childValues, inputTypes }: EditModalProps) {
   const [formData, setFormData] = useState(record);
-
+  const [selectedValues, setSelectedValues] = useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {};
+    child.forEach(c => {
+      initial[c] = record[c]?.id || '';
+    });
+    return initial;
+  });
+  console.log(child); 
+  console.log(childValues);
+  console.log("record", record);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onSave(formData);
@@ -59,7 +70,24 @@ export default function EditModal({ isOpen, onClose, onSave, record, columns, in
                 )}
               </div>
             ))}
-            
+            {child.map((child) => (
+              <div key={child} className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">{child.charAt(0).toUpperCase() + child.slice(1)}</label>
+                <select 
+                  value={selectedValues[child]} 
+                  onChange={(e) => {
+                    setSelectedValues(prev => ({...prev, [child]: e.target.value}));
+                    handleInputChange(`${child}Id`, e.target.value);
+                  }} 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                  <option value="">None</option>
+                  {childValues[child]?.map((value: any) => (
+                    <option key={value.id} value={value.id}>{value.name}</option>
+                  ))}
+                </select>
+              </div>
+            ))}
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 type="button"
