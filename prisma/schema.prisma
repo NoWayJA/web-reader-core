@@ -97,6 +97,8 @@ model Url {
   source Boolean @default(false)
   listPage Boolean @default(false)
   contentPage Boolean @default(false)
+  listExpression String? @db.Text
+  contentExpression String? @db.Text
   configurationId String?
   configuration Configuration? @relation(fields: [configurationId], references: [id])
   createdAt DateTime @default(now())
@@ -113,6 +115,9 @@ model Configuration {
   name String @db.Text
   description String? @db.Text
   prompt String? @db.Text
+  sitePrompt String? @db.Text
+  listPrompt String? @db.Text
+  contentPrompt String? @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   fields ConfigurationFieldJoin[]
