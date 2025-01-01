@@ -4,19 +4,33 @@ import { db } from "@/db/db";
 
 export async function updateManyToManyRelationships(
   parentId: string,
-  childIds: string[],
-  joinTable: string
+  selectedIds: string[],
+  joinTable: string,
+  formData: any,
+  parentTable: string,
+  childJoin: string
 ) {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { [childJoin]: _, ...formDataWithoutJoin } = formData;
+    // Update the parent record with cleaned data
+    await (db[parentTable] as any).update({
+      where: { id: parentId },
+      data: formDataWithoutJoin
+    });
+    // Update the parent record
+    // await (db[parentTable] as any).update({
+    //   where: { id: parentId },
+    //   data: formData
+    // });
+
     // Delete existing relationships
     await (db[joinTable] as any).deleteMany({
-      where: {
-        parentId
-      }
+      where: { parentId }
     });
 
     // Create new relationships
-    const promises = childIds.map((childId: string) =>
+    const promises = selectedIds.map((childId: string) =>
       (db[joinTable] as any).create({
         data: {
           parentId,
@@ -28,8 +42,8 @@ export async function updateManyToManyRelationships(
     await Promise.all(promises);
     return { success: true };
   } catch (error) {
-    console.error('Error updating relationships:', error);
-    return { success: false, error: 'Failed to update relationships' };
+    console.error('Error updating record:', error);
+    return { success: false, error: 'Failed to update record' };
   }
 }
 

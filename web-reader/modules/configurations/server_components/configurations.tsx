@@ -31,7 +31,8 @@ const Configurations = async ({ searchParams }: PageProps) => {
                             childTable: "field",
                             childJoin: "fields",
                             joinTable: "configurationFieldJoin",
-                            orderBy: "weight",
+                            orderChildBy: "weight",
+                            orderBy: "name",
                         }} />
                     </div>
                 </div>

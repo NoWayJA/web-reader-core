@@ -8,9 +8,12 @@ interface ManyToManyProps {
   params: {
     parentTable: string;
     childTable: string;
+    childJoin: string;
     joinTable: string;
+    orderChildBy?: string;
     orderBy?: string;
     cols?: string[];
+    inputTypes?: string[];
   };
 }
 
@@ -18,9 +21,12 @@ export default async function ManyToMany({ params }: ManyToManyProps) {
   const {
     parentTable,
     childTable,
+    childJoin,
     joinTable,
+    orderChildBy = 'name',
     orderBy = 'name',
-    cols = ['name']
+    cols = ['name'],
+    inputTypes = ['text']
   } = params;
 
   // Get all records with their relationships
@@ -28,26 +34,26 @@ export default async function ManyToMany({ params }: ManyToManyProps) {
     select: {
       id: true,
       ...cols.reduce((acc: any, col) => ({ ...acc, [col]: true }), {}),
-      fields: {
+      [childJoin]: {
         include: {
           child: true
         },
         orderBy: {
           child: {
-            [orderBy]: 'asc'
+            [orderChildBy]: 'asc'
           }
         }
       }
     },
     orderBy: {
-      name: 'asc'
+      [orderBy]: 'asc'
     }
   });
 
   // Get all available children for selection with sorting
   const availableChildren = await (db[childTable] as any).findMany({
     orderBy: {
-      [orderBy]: 'asc'
+      [orderChildBy]: 'asc'
     }
   });
 
@@ -100,7 +106,10 @@ export default async function ManyToMany({ params }: ManyToManyProps) {
                   currentChildren={record.fields.map((f: any) => f.child)}
                   parentTable={parentTable}
                   childTable={childTable}
+                  childJoin={childJoin}
                   joinTable={joinTable}
+                  cols={cols}
+                  inputTypes={inputTypes}
                 />
               </td>
             </tr>

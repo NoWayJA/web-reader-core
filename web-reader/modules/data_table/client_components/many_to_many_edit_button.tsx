@@ -11,29 +11,43 @@ interface ManyToManyEditButtonProps {
   currentChildren: any[];
   parentTable: string;
   childTable: string;
+  childJoin: string;
   joinTable: string;
+  cols: string[];
+  inputTypes: string[];
 }
 
 export default function ManyToManyEditButton({
   record,
   availableChildren,
   currentChildren,
-  joinTable
+  childJoin,
+  joinTable,
+  cols,
+  inputTypes,
+  parentTable
 }: ManyToManyEditButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleSave = async (selectedIds: string[]) => {
+  const handleSave = async (selectedIds: string[], formData: any) => {
     try {
-      const result = await updateManyToManyRelationships(record.id, selectedIds, joinTable);
+      const result = await updateManyToManyRelationships(
+        record.id, 
+        selectedIds, 
+        joinTable,
+        formData,
+        parentTable,
+        childJoin
+      );
       
       if (result.success) {
         window.location.reload();
       } else {
-        alert('Failed to update relationships');
+        alert('Failed to update record');
       }
     } catch (error) {
-      console.error('Failed to update relationships:', error);
-      alert('Failed to update relationships');
+      console.error('Failed to update record:', error);
+      alert('Failed to update record');
     }
   };
 
@@ -51,8 +65,11 @@ export default function ManyToManyEditButton({
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}
         record={record}
+        childJoin={childJoin}
         availableChildren={availableChildren}
         currentChildren={currentChildren}
+        cols={cols}
+        inputTypes={inputTypes}
       />
     </>
   );
