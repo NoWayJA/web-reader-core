@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/db/db";
+import ManyToManyEditButton from '../client_components/many_to_many_edit_button';
 
 interface ManyToManyProps {
   params: {
@@ -12,7 +13,6 @@ interface ManyToManyProps {
 
 export default async function ManyToMany({ params }: ManyToManyProps) {
   const { parentTable, childTable, joinTable } = params;
-  console.log(childTable, joinTable);
 
   // Get all records with their relationships
   const records = await (db[parentTable] as any).findMany({
@@ -25,6 +25,9 @@ export default async function ManyToMany({ params }: ManyToManyProps) {
     }
   });
 
+  // Get all available children for selection
+  const availableChildren = await (db[childTable] as any).findMany();
+
   return (
     <div className="p-4">
       <table className="min-w-full divide-y divide-gray-200">
@@ -35,6 +38,9 @@ export default async function ManyToMany({ params }: ManyToManyProps) {
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Children
+            </th>
+            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
             </th>
           </tr>
         </thead>
@@ -50,6 +56,16 @@ export default async function ManyToMany({ params }: ManyToManyProps) {
                     {join.child.name}
                   </span>
                 ))}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <ManyToManyEditButton
+                  record={record}
+                  availableChildren={availableChildren}
+                  currentChildren={record.fields.map((f: any) => f.child)}
+                  parentTable={parentTable}
+                  childTable={childTable}
+                  joinTable={joinTable}
+                />
               </td>
             </tr>
           ))}
