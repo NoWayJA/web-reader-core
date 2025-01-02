@@ -23,9 +23,7 @@ export default function EditModal({ isOpen, onClose, onSave, record, columns, ch
     });
     return initial;
   });
-  console.log(child); 
-  console.log(childValues);
-  console.log("record", record);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onSave(formData);

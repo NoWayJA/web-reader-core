@@ -64,7 +64,6 @@ export default async function DataTable({ params }: { params: TableParams }) {
       });
     }));
   }
-  console.log("childValues", childValues);
   const queryOptions: any = {
     where,
     orderBy: { id: "desc" },
