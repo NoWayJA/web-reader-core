@@ -23,7 +23,7 @@ export default function RootLayout({
       <body className="bg-gray-50 dark:bg-gray-900">
         <div className="flex min-h-screen">
           <SideMenu />
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto transition-all duration-300">
             <div className="container mx-auto px-4 py-8">
               {children}
             </div>
