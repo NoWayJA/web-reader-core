@@ -121,12 +121,12 @@ export default async function DataTable({ params }: { params: TableParams }) {
               {allEntities?.map((entity: any) => (
                 <tr key={entity.id}>
                   {params.cols.map((col: string) => (
-                    <td key={col} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td key={col} className="px-2 py-4 break-words text-sm text-gray-500">
                       {formatValue(entity[col])}
                     </td>
                   ))}
                   {params.child?.map((child: string) => (
-                    <td key={child} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td key={child} className="px-6 py-4  break-words text-sm text-gray-500">
                       {entity[child]?.name || 'None'}
                     </td>
                   ))}
