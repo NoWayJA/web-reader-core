@@ -16,8 +16,8 @@ model Entry {
   id        String  @id @default(cuid())
   content   String?  @db.Text
   fileUrl   String? @db.Text
-  urlId     String?
-  url       Url?    @relation(fields: [urlId], references: [id])
+  urlId     String  @unique
+  url       Url     @relation(fields: [urlId], references: [id])
   fieldData Json?
   deleted   Boolean @default(false)
 

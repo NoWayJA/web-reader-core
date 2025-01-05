@@ -61,7 +61,6 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
         const { queueId, status, fieldData } = body;
-        console.log("fieldData", fieldData);
 
         addLog(`Queue API: Updating queue item ${queueId} to status ${status}`);
 
@@ -70,39 +69,42 @@ export async function POST(request: Request) {
             return new Response('Invalid request body', { status: 400 });
         }
 
-        // Use transaction to ensure data consistency
-        const result = await db.$transaction(async (tx) => {
-            // Update queue item status
-            const updatedQueue = await tx.queue.update({
-                where: { id: queueId },
-                data: {
-                    status: status,
-                    updatedAt: new Date()
-                },
-                include: {
-                    url: true
-                }
-            });
 
-            // Create entry record if queue is completed and entry data provided
-            if (status === 'COMPLETED' && fieldData) {
-
-                addLog(`Queue API: Creating new entry for URL ${updatedQueue.url.id}`);
-                await tx.entry.create({
-                    data: {
-                        urlId: updatedQueue.url.id,
-                        fieldData: fieldData,
-                        createdAt: new Date(),
-                        updatedAt: new Date()
-                    }
-                });
+        // Update queue item status
+        const updatedQueue = await db.queue.update({
+            where: { id: queueId },
+            data: {
+                status: status,
+                updatedAt: new Date()
+            },
+            include: {
+                url: true
             }
-
-            return updatedQueue;
         });
 
+        // Create entry record if queue is completed and entry data provided
+        if (status === 'COMPLETED' && fieldData) {
+
+            addLog(`Queue API: Creating new entry for URL ${updatedQueue.url.id}`);
+            await db.entry.upsert({
+                where: {
+                    urlId: updatedQueue.url.id
+                },
+                create: {
+                    urlId: updatedQueue.url.id,
+                    fieldData: fieldData,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                update: {
+                    fieldData: fieldData,
+                    updatedAt: new Date()
+                }
+            });
+        }
+
         addLog(`Queue API: Successfully updated queue item ${queueId}`);
-        return new Response(JSON.stringify(result), {
+        return new Response(JSON.stringify(updatedQueue), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });
