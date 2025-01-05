@@ -60,7 +60,8 @@ export async function GET() {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { queueId, status, entry } = body;
+        const { queueId, status, fieldData } = body;
+        console.log("fieldData", fieldData);
 
         addLog(`Queue API: Updating queue item ${queueId} to status ${status}`);
 
@@ -84,12 +85,13 @@ export async function POST(request: Request) {
             });
 
             // Create entry record if queue is completed and entry data provided
-            if (status === 'COMPLETED' && entry) {
+            if (status === 'COMPLETED' && fieldData) {
+
                 addLog(`Queue API: Creating new entry for URL ${updatedQueue.url.id}`);
                 await tx.entry.create({
                     data: {
-                        ...entry,
                         urlId: updatedQueue.url.id,
+                        fieldData: fieldData,
                         createdAt: new Date(),
                         updatedAt: new Date()
                     }

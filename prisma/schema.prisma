@@ -3,7 +3,7 @@
 
 generator client {
   provider        = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "windows"]
+  binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "windows"]
   previewFeatures = ["relationJoins"]
 }
 
@@ -12,18 +12,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Entry {
-  id      String @id @default(cuid())
-  content String @db.Text
-
-  fileUrl String? @db.Text
-
-  deleted Boolean @default(false)
+  id        String  @id @default(cuid())
+  content   String?  @db.Text
+  fileUrl   String? @db.Text
+  urlId     String?
+  url       Url?    @relation(fields: [urlId], references: [id])
+  fieldData Json?
+  deleted   Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
 }
 
 // next auth tables
@@ -67,15 +66,15 @@ enum Role {
 }
 
 model User {
-  id                    String             @id @default(cuid())
-  name                  String?
-  email                 String?            @unique
-  emailVerified         DateTime?
-  image                 String?
-  role                  Role               @default(DISABLED)
-  accounts              Account[]
-  sessions              Session[]
-  enabled               Boolean            @default(true)
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(DISABLED)
+  accounts      Account[]
+  sessions      Session[]
+  enabled       Boolean   @default(true)
 }
 
 model VerificationToken {
@@ -89,62 +88,61 @@ model VerificationToken {
 // module tables
 
 model Url {
-  id String @id @default(cuid())
-  url String @db.Text
-  name String? @db.Text
-  description String? @db.Text
-  parentId String? @db.Text
-  source Boolean @default(false)
-  listPage Boolean @default(false)
-  contentPage Boolean @default(false)
-  listExpression String? @db.Text
-  contentExpression String? @db.Text
-  configurationId String?
-  configuration Configuration? @relation(fields: [configurationId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  
-  children Url[] @relation("UrlToUrl")
-  parent   Url?  @relation("UrlToUrl", fields: [parentId], references: [id])
-  queue Queue[]
-  
+  id                String         @id @default(cuid())
+  url               String         @db.Text
+  name              String?        @db.Text
+  description       String?        @db.Text
+  parentId          String?        @db.Text
+  source            Boolean        @default(false)
+  listPage          Boolean        @default(false)
+  contentPage       Boolean        @default(false)
+  listExpression    String?        @db.Text
+  contentExpression String?        @db.Text
+  configurationId   String?
+  configuration     Configuration? @relation(fields: [configurationId], references: [id])
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @default(now())
+
+  children Url[]   @relation("UrlToUrl")
+  parent   Url?    @relation("UrlToUrl", fields: [parentId], references: [id])
+  queue    Queue[]
+  entries  Entry[]
 }
 
 model Configuration {
-  id String @id @default(cuid())
-  name String @db.Text
-  description String? @db.Text
-  prompt String? @db.Text
-  sitePrompt String? @db.Text
-  listPrompt String? @db.Text
-  contentPrompt String? @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  fields ConfigurationFieldJoin[]
+  id            String                   @id @default(cuid())
+  name          String                   @db.Text
+  description   String?                  @db.Text
+  prompt        String?                  @db.Text
+  sitePrompt    String?                  @db.Text
+  listPrompt    String?                  @db.Text
+  contentPrompt String?                  @db.Text
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @default(now())
+  fields        ConfigurationFieldJoin[]
 
   urls Url[]
 }
 
 model ConfigurationFieldJoin {
-  id String @id @default(cuid())
+  id       String        @id @default(cuid())
   parentId String
-  childId String
-  parent Configuration @relation(fields: [parentId], references: [id])
-  child Field @relation(fields: [childId], references: [id])
+  childId  String
+  parent   Configuration @relation(fields: [parentId], references: [id])
+  child    Field         @relation(fields: [childId], references: [id])
 }
 
 model Field {
-  id String @id @default(cuid())
-  name String @db.Text
-  type String @db.Text @default("text")
-  description String? @db.Text
-  prompt String? @db.Text
-  weight Int @default(1)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id             String                   @id @default(cuid())
+  name           String                   @db.Text
+  type           String                   @default("text") @db.Text
+  description    String?                  @db.Text
+  prompt         String?                  @db.Text
+  weight         Int                      @default(1)
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @default(now())
   configurations ConfigurationFieldJoin[]
 }
-
 
 enum QueueStatus {
   PENDING
@@ -154,12 +152,12 @@ enum QueueStatus {
 }
 
 model Queue {
-  id String @id @default(cuid())
-  urlId String @unique
-  url Url @relation(fields: [urlId], references: [id])
-  status QueueStatus
-  actAfter DateTime
-  retries Int @default(10)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id        String      @id @default(cuid())
+  urlId     String      @unique
+  url       Url         @relation(fields: [urlId], references: [id])
+  status    QueueStatus
+  actAfter  DateTime
+  retries   Int         @default(10)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @default(now())
 }
