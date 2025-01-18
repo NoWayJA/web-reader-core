@@ -7,7 +7,7 @@ interface PageProps {
 }
 
 // Convert to Server Component and properly type the props
-const Queue = async ({ searchParams }: PageProps) => {
+const Entries = async ({ searchParams }: PageProps) => {
     const {page} = await searchParams;
     const pageNumber = page ? Number(page) : undefined;
     
@@ -15,9 +15,9 @@ const Queue = async ({ searchParams }: PageProps) => {
         <div className="min-h-screen bg-gray-50 p-6">
             <div className="max-w-7xl mx-auto">
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Queue</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Entries</h1>
                     <p className="mt-2 text-gray-600">
-                        Manage your queue
+                        Manage your entries
                     </p>
                 </div>
                 
@@ -25,9 +25,8 @@ const Queue = async ({ searchParams }: PageProps) => {
                     <div className="p-6">
                         <DataTable  
                             params={{
-                                table: "queue",
-                                cols: ["status",  "retries", "actAfter"],
-                                child: ["url"],
+                                table: "entry",
+                                cols: ["fieldData"],   
                                 page: pageNumber
                             }}
                         />
@@ -39,4 +38,4 @@ const Queue = async ({ searchParams }: PageProps) => {
     );
 };
 
-export default Queue;
+export default Entries;

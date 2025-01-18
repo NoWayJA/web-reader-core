@@ -36,6 +36,9 @@ function formatValue(value: any): string {
       second: 'numeric' 
     });
   }
+  if (value instanceof Object) {
+    return JSON.stringify(value);
+  }
   return String(value ?? '');
 }
 
