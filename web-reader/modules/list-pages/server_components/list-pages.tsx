@@ -28,7 +28,7 @@ const ListPages = async ({ searchParams }: PageProps) => {
                         <DataTable 
                             params={{
                                 table: "url",
-                                cols: ["name", "url"],
+                                cols: ["name", "url", "listExpression"],
                                 child: ["configuration"],
                                 page: pageNumber,
                                 filter: JSON.stringify([{ listPage: true }]),

@@ -11,7 +11,7 @@ export async function POST(
     switch (urltype) {
         case "list":
             const body = await request.json();
-            const { queueId, status, fieldData } = body;
+            const { queueId, status, extractedData, listOfUrls, type } = body;
             const queueItem = await db.queue.findUnique({
                 where: { id: queueId },
                 include: {
@@ -20,20 +20,30 @@ export async function POST(
             });
 
             try {
-                const { success, contentAmount, regex } = JSON.parse(fieldData);
-                if (status === "completed" && success) {
-                    console.log("successfully completed");
-                    console.log("contentAmount", contentAmount);
-                }
-                // check if regex is not null and if it is not a valid regex
-                if (regex && isValidRegex(regex) && queueItem) {
-                  const updatedUrl = await db.url.update({
-                        where: { id: queueItem.url.id },
-                        data: {
-                            listExpression: regex as string
+                switch (type) {
+                    case "regex":
+                        const { success, contentAmount, regex } = JSON.parse(extractedData);
+                        if (status === "completed" && success) {
+                            console.log("successfully completed");
+                            console.log("contentAmount", contentAmount);
                         }
-                    });
-                    console.log("updatedUrl", updatedUrl);
+                        // check if regex is not null and if it is not a valid regex
+                        if (regex && isValidRegex(regex) && queueItem) {
+                            const updatedUrl = await db.url.update({
+                                where: { id: queueItem.url.id },
+                                data: {
+                                    listExpression: regex as string
+                                }
+                            });
+                            console.log("updatedUrl", updatedUrl);
+                        }
+                        break;
+                    case "list":
+                        console.log("list", listOfUrls);
+                        break;
+
+                    default:
+                        return Response.json({ urltype });
                 }
             } catch (error) {
                 console.error("Error parsing fieldData", error);
