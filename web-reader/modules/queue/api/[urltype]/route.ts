@@ -49,10 +49,12 @@ export async function POST(
                         break;
                     case "list":
                         // create a list of urls from the listOfLinks
-                        const listOfUrls = listOfLinks.map(link => link.url);
+                        const listOfUrls = listOfLinks.map((link: LinkData) => link.url);
+                        // deduplicate the listOfUrls
+                        const uniqueListOfUrls = [...new Set(listOfUrls)] as string[];
                         const existingUrls = await db.url.findMany({
                             where: {
-                                url: { in: listOfUrls }
+                                url: { in: uniqueListOfUrls }
                             },
                             select: {
                                 id: true,
@@ -60,16 +62,21 @@ export async function POST(
                             }
                         });
                         // create a list of urls for each url in the listOfUrls which is not already in urls
-                        const newLinks = listOfLinks.filter((link: LinkData) =>
-                             !existingUrls.some(existingUrl => existingUrl.url === link.url));
+                        let newLinks = listOfLinks.filter((link: LinkData) =>
+                            !existingUrls.some(existingUrl => existingUrl.url === link.url));
+                        //dedupe newlinks based on url
+                        const uniqueNewLinks = [...new Set(newLinks.map((link: LinkData) => link.url))] as string[];
+                        newLinks = uniqueNewLinks.map((url: string) => newLinks.find((link: LinkData) => link.url === url));
+
                         //create a new url in the database for each url in the newUrls
                         const newUrlsInDb = await db.url.createMany({
                             data: newLinks.map(link =>
-                                 ({ url: link.url , 
-                                    name: link.text,
-                                    contentPage: true,
-                                    configurationId: queueItem?.url.configurationId
-                                }))
+                            ({
+                                url: link.url,
+                                name: link.text,
+                                contentPage: true,
+                                configurationId: queueItem?.url.configurationId
+                            }))
                         });
                         console.log("newUrlsInDb ", newUrlsInDb.count);
                         break;
