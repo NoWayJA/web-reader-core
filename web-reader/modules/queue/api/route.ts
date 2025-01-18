@@ -1,22 +1,13 @@
 /* eslint-disable no-var */
 import { db } from "@/db/db";
 import { QueueStatus } from "@prisma/client";
+import { addLog } from "@/web-reader/modules/queue/library/queue-helpers";
 
 // Import the global logs type
 declare global {
     var logs: string[] | undefined;
 }
 
-// Helper function to add logs
-function addLog(message: string) {
-    if (globalThis.logs) {
-        globalThis.logs_updated = new Date().toISOString();
-        globalThis.logs.push(`${message} ${globalThis.logs_updated}`);
-        if (globalThis.logs.length > 50) {
-            globalThis.logs.shift();
-        }
-    }
-}
 
 // GET endpoint - Retrieves the next pending queue item
 export async function GET() {
