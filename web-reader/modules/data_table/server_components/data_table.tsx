@@ -43,7 +43,7 @@ function formatValue(value: any): string {
 }
 
 export default async function DataTable({ params }: { params: TableParams }) {
-  const pageSize = 10;
+  const pageSize = 50;
   const tableName = params.table;
   const page = params.page || 1;
   const offset = (page - 1) * pageSize;
@@ -89,7 +89,6 @@ export default async function DataTable({ params }: { params: TableParams }) {
   }
 
   const allEntities = await (db[tableName] as any).findMany(queryOptions);
-
   return (
     <div>
       <div className="w-full justify-between">

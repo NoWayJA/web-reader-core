@@ -45,6 +45,7 @@ const ListPages = async ({ searchParams }: PageProps) => {
                     <CSVUpload 
                         table="url" 
                         cols={["name", "url"]} 
+                        unique="url"
                         defaults={JSON.stringify([{ listPage: true }])}
                     />
                 </div>

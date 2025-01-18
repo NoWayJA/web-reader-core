@@ -27,6 +27,7 @@ const Entries = async ({ searchParams }: PageProps) => {
                             params={{
                                 table: "entry",
                                 cols: ["fieldData"],   
+                                child: ["url"],
                                 page: pageNumber
                             }}
                         />

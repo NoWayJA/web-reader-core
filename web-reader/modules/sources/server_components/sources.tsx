@@ -39,6 +39,7 @@ const Sources = async ({ searchParams }: PageProps) => {
                     <CSVUpload 
                         table="url" 
                         cols={["name", "url"]} 
+                        unique="url"
                         defaults={JSON.stringify([{ source: true }])}
                     />
                 </div>

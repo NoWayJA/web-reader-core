@@ -3,6 +3,11 @@ import { QueueStatus } from "@prisma/client";
 import { NextRequest } from 'next/server'
 import { isValidRegex, addLog } from "@/web-reader/modules/queue/library/queue-helpers";
 
+type LinkData = {
+    url: string;
+    text: string;
+};
+
 export async function POST(
     request: NextRequest,
     context: { params: { urltype: string } }
@@ -11,11 +16,15 @@ export async function POST(
     switch (urltype) {
         case "list":
             const body = await request.json();
-            const { queueId, status, extractedData, listOfUrls, type } = body;
+            const { queueId, status, extractedData, listOfLinks, type } = body;
             const queueItem = await db.queue.findUnique({
                 where: { id: queueId },
                 include: {
-                    url: true
+                    url: {
+                        include: {
+                            configuration: true
+                        }
+                    }
                 }
             });
 
@@ -39,7 +48,30 @@ export async function POST(
                         }
                         break;
                     case "list":
-                        console.log("list", listOfUrls);
+                        // create a list of urls from the listOfLinks
+                        const listOfUrls = listOfLinks.map(link => link.url);
+                        const existingUrls = await db.url.findMany({
+                            where: {
+                                url: { in: listOfUrls }
+                            },
+                            select: {
+                                id: true,
+                                url: true
+                            }
+                        });
+                        // create a list of urls for each url in the listOfUrls which is not already in urls
+                        const newLinks = listOfLinks.filter((link: LinkData) =>
+                             !existingUrls.some(existingUrl => existingUrl.url === link.url));
+                        //create a new url in the database for each url in the newUrls
+                        const newUrlsInDb = await db.url.createMany({
+                            data: newLinks.map(link =>
+                                 ({ url: link.url , 
+                                    name: link.text,
+                                    contentPage: true,
+                                    configurationId: queueItem?.url.configurationId
+                                }))
+                        });
+                        console.log("newUrlsInDb ", newUrlsInDb.count);
                         break;
 
                     default:

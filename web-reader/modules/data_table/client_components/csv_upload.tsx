@@ -7,9 +7,10 @@ interface CSVUploadProps {
   table: string;
   cols: string[];
   defaults?: string;
+  unique?: string;
 }
 
-export default function CSVUpload({ table, cols, defaults }: CSVUploadProps) {
+export default function CSVUpload({ table, cols, defaults, unique }: CSVUploadProps) {
   const [status, setStatus] = useState<{ message: string; success?: boolean } | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -25,7 +26,8 @@ export default function CSVUpload({ table, cols, defaults }: CSVUploadProps) {
         params: { 
           table, 
           cols,
-          defaults 
+          defaults,
+          unique
         },
         file
       });
