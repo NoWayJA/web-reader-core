@@ -1,10 +1,8 @@
 # Web Reader Worker Core 🚀
 
-![Web Reader Worker Core](docs/assets/logo.png)
 
 *Enterprise-Grade Content Extraction Engine with AI-Powered Processing*
-
-[![View Demo][demo-badge]][demo-url] [![Quick Start][quick-badge]][quick-url] [![Enterprise][enterprise-badge]][enterprise-url] [![Architecture][arch-badge]][arch-url]
+  
 
 ## 🌟 Overview
 
@@ -29,12 +27,13 @@ Web Reader Worker Core is an enterprise content extraction and processing engine
 
 ```mermaid
 graph TD
-    A[Load Balancer] --> B[Worker Nodes]
-    B --> C[Content Extraction]
-    C --> D[AI Processing Pipeline]
-    D --> E[Field Mapping]
-    E --> F[Data Storage]
-    
+    A[Load Balancer] --> B[Web Reader Core]
+    B --> C[Queue]
+    B --> D[Content Extraction]
+    D --> E[AI Processing Pipeline]
+    E --> F[Field Mapping]
+    E --> G[Data Storage]
+        
     B -.-> G[Real-time Monitoring]
     B -.-> H[Analytics Dashboard]
 ```
