@@ -2,6 +2,7 @@
 import { db } from "@/db/db";
 import { QueueStatus } from "@prisma/client";
 import { addLog } from "@/web-reader/modules/queue/library/queue-helpers";
+import { recordAccess } from "@/web-reader/modules/throttle/server_components/throttle";
 
 // Import the global logs type
 declare global {
@@ -10,7 +11,12 @@ declare global {
 
 
 // GET endpoint - Retrieves the next pending queue item
-export async function GET() {
+export async function GET(request: Request) {
+    // get header
+    const worker_group = request.headers.get('WorkerGroup');
+    if (!worker_group) {
+        return new Response('Worker group header required', { status: 400 });
+    }
     addLog(`Queue API: Fetching next pending queue item`);
     const queue = await db.queue.findFirst({
         // Include related data with nested relationships
@@ -41,6 +47,10 @@ export async function GET() {
         });
     }
     addLog(`Queue API: Found pending item with ID ${queue.id}`);
+    // source is the based of the url eg bbc.com
+    const source = queue.url.url.split('/')[2];
+    // record access
+    recordAccess(source, worker_group); 
     return new Response(JSON.stringify(queue), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
