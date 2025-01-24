@@ -1,10 +1,17 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
 ## Getting Started
+
+copy .env.example to .env and fill in the values
+
+Setup a postgres database and run the migrations:
+
+For local dev 
+npx prisma push
 
 First, run the development server:
 
 ```bash
+npm run copy
+
 npm run dev
 # or
 yarn dev
@@ -18,19 +25,49 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+### Configuration
+1. Set up field definitions
+2. Setup configuration mappings to fields
+3. Import URLs to be processed and set the configuration to use for each URL
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Queue Processing
+1. URLs are added to the queue
+2. Processing status is tracked
+3. Results are stored in the database
+4. Extracted links are automatically deduped
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 API Endpoints
 
-## Deploy on Vercel
+### Queue API
+- `POST /api/queue/list`: Process list pages and extract URLs
+- `POST /api/queue/content`: Extract content from pages
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Data Import API
+- `POST /api/import`: Import data via CSV with duplicate handling
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📦 Database Schema
+
+Key tables:
+- `urls`: Stores URL information and configurations
+- `queue`: Manages processing status
+- `entries`: Stores extracted content
+- `configurations`: Stores regex patterns and rules
+
+## 🛠 Development
+
+### Prerequisites
+- Node.js
+- PostgreSQL
+- Next.js
+
+### Setup
+1. Clone the repository
+2. Copy .env.example to .env and fill in the values
+3. Setup Postgres database
+4. Install dependencies: `npm install`
+5. Run the module copy code `npm run copy`
+6. Run migrations: `npm run migrate`
+7. Start development server: `npm run dev`
+
