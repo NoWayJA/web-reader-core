@@ -74,14 +74,15 @@ const recordAccess = (source: string, worker_group: string) => {
  * Checks if access should be throttled based on recent activity
  * @param source_id - Identifier for the content source
  * @param worker_group - Identifier for the worker group
- * @returns true if access should be throttled (too recent), false otherwise
+ * @returns returm a list of sources that are being throttled
  */
-const shouldThrottle = (source_id: string, worker_group: string) => {   
-    const last_access = globalThis.Sources.find(activity => 
-        activity.source === source_id && 
-        activity.worker_group === worker_group
-    )?.last_access;
-    return last_access && Date.now() - last_access < min_spacing;
+const shouldThrottle = (worker_group: string) => {   
+    // get the sources that are being throttled
+    const throttled_sources = globalThis.Sources.filter(activity => 
+        activity.worker_group === worker_group &&
+        Date.now() - activity.last_access < min_spacing
+    );
+    return throttled_sources;
 }
 
 export { recordAccess, shouldThrottle };

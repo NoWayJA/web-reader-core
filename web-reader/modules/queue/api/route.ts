@@ -2,7 +2,7 @@
 import { db } from "@/db/db";
 import { QueueStatus } from "@prisma/client";
 import { addLog } from "@/web-reader/modules/queue/library/queue-helpers";
-import { recordAccess } from "@/web-reader/modules/throttle/server_components/throttle";
+import { recordAccess, shouldThrottle } from "@/web-reader/modules/throttle/server_components/throttle";
 
 // Import the global logs type
 declare global {
@@ -17,6 +17,8 @@ export async function GET(request: Request) {
     if (!worker_group) {
         return new Response('Worker group header required', { status: 400 });
     }
+    // get sources from the throttle module
+    const throttled_sources = shouldThrottle(worker_group);
     addLog(`Queue API: Fetching next pending queue item`);
     const queue = await db.queue.findFirst({
         // Include related data with nested relationships
@@ -35,9 +37,21 @@ export async function GET(request: Request) {
                 }
             }
         },
-        where: { status: 'PENDING' },
+        where: { 
+            status: 'PENDING',
+            url: {
+                NOT: {
+                    OR: throttled_sources.map(source => ({
+                        url: {
+                            startsWith: source.source
+                        }
+                    }))
+                }
+            }
+        },
         orderBy: { actAfter: 'asc' }  // Get earliest scheduled item first
     });
+
     // Return queue empty if no pending items found
     if (!queue) {
         addLog(`Queue API: No pending items found`);
@@ -47,8 +61,9 @@ export async function GET(request: Request) {
         });
     }
     addLog(`Queue API: Found pending item with ID ${queue.id}`);
-    // source is the based of the url eg bbc.com
-    const source = queue.url.url.split('/')[2];
+    // source is the full domain including protocol
+    const source = new URL(queue.url.url).origin;
+
     // record access
     recordAccess(source, worker_group); 
     return new Response(JSON.stringify(queue), {
