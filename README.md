@@ -32,7 +32,7 @@ graph TD
     C --> D[Content Extraction]
     D --> E[AI Processing Pipeline]
     E --> F[Field Mapping]
-    E --> B[Data Storage]
+    E --> B[Web Reader Core]
         
     B -.-> G[Real-time Monitoring]
     B -.-> H[Analytics Dashboard]
