@@ -29,10 +29,12 @@ Web Reader Worker Core is an enterprise content extraction and processing engine
 graph TD
     A[Load Balancer] --> B[Web Reader Core]
     B --> C[Queue]
-    C --> D[Content Extraction]
-    D --> E[AI Processing Pipeline]
-    E --> F[Field Mapping]
-    E --> B[Web Reader Core]
+    C --> D[Web Reader Worker]
+    D --> E[Content Extraction]
+    E --> F[AI Processing Pipeline]
+    F --> G[Field Mapping]
+    G --> H[Data Storage]
+    H --> B[Web Reader Core]
         
     B -.-> G[Real-time Monitoring]
     B -.-> H[Analytics Dashboard]
