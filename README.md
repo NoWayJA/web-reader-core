@@ -36,8 +36,8 @@ graph TD
     G --> H[Data Storage]
     H --> B[Web Reader Core]
         
-    B -.-> G[Real-time Monitoring]
-    B -.-> H[Analytics Dashboard]
+    B -.-> I[Real-time Monitoring]
+    B -.-> J[Analytics Dashboard]
 ```
 
 ## 🔧 Technical Features
