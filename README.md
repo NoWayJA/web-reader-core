@@ -53,7 +53,7 @@ Key tables:
 - `urls`: Stores URL information and configurations
 - `queue`: Manages processing status
 - `entries`: Stores extracted content
-- `configurations`: Stores regex patterns and rules
+- `configurations`: Stores field mappings and prompts
 
 ## 🛠 Development
 
