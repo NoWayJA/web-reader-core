@@ -218,3 +218,8 @@ Key tables:
 6. Run migrations: `npm run migrate`
 7. Start development server: `npm run dev`
 
+---
+
+<p align="center">
+Started with ❤️ by NoWayJA
+</p>
