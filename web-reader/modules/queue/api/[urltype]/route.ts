@@ -2,7 +2,7 @@ import { db } from "@/db/db";
 import { QueueStatus } from "@prisma/client";
 import { NextRequest } from 'next/server'
 import { isValidRegex, addLog } from "@/web-reader/modules/queue/library/queue-helpers";
-
+import { enqueue } from "@/web-reader/modules/queue/server_services/enqueue";
 type LinkData = {
     url: string;
     text: string;
@@ -78,7 +78,16 @@ export async function POST(
                                 configurationId: queueItem?.url.configurationId
                             }))
                         });
+                        // After creating URLs, get them
+                        const newUrls = await db.url.findMany({
+                            where: {
+                                url: {
+                                    in: newLinks.map(link => link.url)
+                                }
+                            }
+                        });
                         console.log("newUrlsInDb ", newUrlsInDb.count);
+                        await enqueue(newUrls);
                         break;
 
                     default:

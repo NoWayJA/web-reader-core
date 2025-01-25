@@ -221,5 +221,5 @@ Key tables:
 ---
 
 <p align="center">
-Started with ❤️ by NoWayJA
+Started with ⚡ by NoWayJA
 </p>
