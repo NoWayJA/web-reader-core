@@ -17,7 +17,7 @@ model Entry {
   content   String?  @db.Text
   fileUrl   String? @db.Text
   urlId     String  @unique
-  url       Url     @relation(fields: [urlId], references: [id])
+  url       Url     @relation(fields: [urlId], references: [id], onDelete: Cascade)
   fieldData Json?
   deleted   Boolean @default(false)
 
@@ -154,7 +154,7 @@ enum QueueStatus {
 model Queue {
   id        String      @id @default(cuid())
   urlId     String      @unique
-  url       Url         @relation(fields: [urlId], references: [id])
+  url       Url         @relation(fields: [urlId], references: [id], onDelete: Cascade)
   status    QueueStatus
   actAfter  DateTime
   retries   Int         @default(10)
